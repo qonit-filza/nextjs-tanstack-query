@@ -29,6 +29,21 @@ export type User = {
   role: string
 }
 
+export type RawUserFilter = {
+  page: string | string[] | null
+  limit: string | string[] | null
+}
+
+export type NormalizedUserFilter = {
+  page: number
+  limit: number
+}
+
+export type ApiUserFilter = {
+  limit: number
+  skip: number
+}
+
 export type Address = {
   address: string
   city: string

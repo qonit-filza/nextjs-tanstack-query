@@ -1,48 +1,50 @@
 import { api } from '@/lib/api-client'
-import { QueryConfig } from '@/lib/tanstack-query'
-import {
-  queryOptions,
-  useQuery,
-  useSuspenseQuery,
-  QueryClient,
-} from '@tanstack/react-query'
-import { User } from '@/types/api'
+import { getQueryClient, QueryConfig } from '@/lib/tanstack-query'
+import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { User, NormalizedUserFilter } from '@/types/api'
+import { createApiFilter } from '@/lib/filter'
 
-export function getUsers(): Promise<{ users: User[] }> {
-  return api.get('/users')
+export function getUsers(
+  filter: NormalizedUserFilter
+): Promise<{ users: User[]; total: number }> {
+  const params = createApiFilter(filter)
+  return api.get('/users', { params })
 }
 
-export function getUsersQueryOptions() {
+export function getUsersQueryOptions(filter: NormalizedUserFilter) {
   return queryOptions({
-    queryKey: ['users'],
-    queryFn: getUsers,
+    queryKey: ['users', filter],
+    queryFn: () => getUsers(filter),
   })
 }
 
 type UseUsersOptions = {
   queryConfig?: QueryConfig<typeof getUsersQueryOptions>
+  filter: NormalizedUserFilter
 }
 
-export function usePrefetchGetUsers(
-  queryClient: QueryClient,
-  queryConfig: UseUsersOptions = {}
-) {
-  return queryClient.prefetchQuery({
-    ...getUsersQueryOptions(),
-    ...queryConfig,
-  })
+export function usePrefetchGetUsers({
+  filter,
+  queryConfig = {},
+}: UseUsersOptions) {
+  const queryClient = getQueryClient()
+  queryClient.prefetchQuery({ ...getUsersQueryOptions(filter), ...queryConfig })
+  return queryClient
 }
 
-export function useSuspenseGetUsers({ queryConfig }: UseUsersOptions = {}) {
+export function useSuspenseGetUsers({
+  filter,
+  queryConfig = {},
+}: UseUsersOptions) {
   return useSuspenseQuery({
-    ...getUsersQueryOptions(),
+    ...getUsersQueryOptions(filter),
     ...queryConfig,
   })
 }
 
-export function useGetUsers({ queryConfig }: UseUsersOptions = {}) {
+export function useGetUsers({ filter, queryConfig = {} }: UseUsersOptions) {
   return useQuery({
-    ...getUsersQueryOptions(),
+    ...getUsersQueryOptions(filter),
     ...queryConfig,
   })
 }

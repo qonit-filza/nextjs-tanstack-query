@@ -1,11 +1,16 @@
 import { usePrefetchGetUsers } from '@/features/users/api/get-users'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getQueryClient } from '@/lib/tanstack-query'
+import { RawUserFilter } from '@/types/api'
 import Dashboard from './dashboard'
+import { normalizeFilter } from '@/lib/filter'
 
-export default function DashboardPage() {
-  const queryClient = getQueryClient()
-  usePrefetchGetUsers(queryClient)
+type DashboardPageProps = {
+  searchParams: Partial<RawUserFilter>
+}
+
+export default function DashboardPage({ searchParams }: DashboardPageProps) {
+  const filter = normalizeFilter(searchParams)
+  const queryClient = usePrefetchGetUsers({ filter })
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
