@@ -22,7 +22,7 @@ import {
 import { useSuspenseGetUsers } from '@/features/users/api/get-users'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { normalizeFilter } from '@/lib/filter'
-import { useMemo } from 'react'
+import { useMemo, useTransition } from 'react'
 import { NormalizedUserFilter } from '@/types/api'
 
 export default function Dashboard() {
@@ -42,7 +42,7 @@ export default function Dashboard() {
     return params.toString()
   }
 
-  const { data } = useSuspenseGetUsers({ filter })
+  const { data, isLoading } = useSuspenseGetUsers({ filter })
   const totalPage = Math.ceil(data.total / filter.limit)
   const paginations = useMemo(() => {
     const result: Array<{
@@ -82,6 +82,8 @@ export default function Dashboard() {
     return result
   }, [filter, totalPage])
 
+  const [isPending, startTransition] = useTransition()
+
   return (
     <main className="bg-slate-50 min-h-screen p-10">
       <div className="flex justify-between">
@@ -92,8 +94,14 @@ export default function Dashboard() {
           <Button variant="outline">-</Button>
         </div>
       </div>
-      <div className="mt-10"></div>
-      <DataTable columns={columns} data={data.users} />
+      <div className="mt-10 relative">
+        <DataTable columns={columns} data={data.users} />
+        {isPending && (
+          <div className="bg-white w-full h-full absolute top-0 left-0 bg-opacity-80 grid place-items-center">
+            Loading...
+          </div>
+        )}
+      </div>
 
       <div className="mt-10 flex justify-between">
         <div className="flex items-center gap-2">
@@ -105,7 +113,9 @@ export default function Dashboard() {
           <Select
             value={filter.limit.toString()}
             onValueChange={(value) => {
-              router.push(`${pathname}?${createQueryString('limit', value)}`)
+              startTransition(() => {
+                router.push(`${pathname}?${createQueryString('limit', value)}`)
+              })
             }}
           >
             <SelectTrigger>

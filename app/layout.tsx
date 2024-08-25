@@ -1,5 +1,6 @@
 import './globals.css'
 import Providers from './providers'
+import NextTopLoader from 'nextjs-toploader'
 
 export const metadata = {
   title: 'Next.js',
@@ -14,7 +15,10 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <NextTopLoader />
+          {children}
+        </Providers>
       </body>
     </html>
   )
