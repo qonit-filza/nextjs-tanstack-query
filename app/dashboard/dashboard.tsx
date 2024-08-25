@@ -42,7 +42,7 @@ export default function Dashboard() {
     return params.toString()
   }
 
-  const { data, isLoading } = useSuspenseGetUsers({ filter })
+  const { data } = useSuspenseGetUsers({ filter })
   const totalPage = Math.ceil(data.total / filter.limit)
   const paginations = useMemo(() => {
     const result: Array<{
@@ -85,7 +85,7 @@ export default function Dashboard() {
   const [isPending, startTransition] = useTransition()
 
   return (
-    <main className="bg-slate-50 min-h-screen p-10">
+    <main className="bg-muted min-h-screen p-10">
       <div className="flex justify-between">
         <Input placeholder="Search" className="max-w-md" />
         <div className="flex gap-2">
@@ -97,7 +97,7 @@ export default function Dashboard() {
       <div className="mt-10 relative">
         <DataTable columns={columns} data={data.users} />
         {isPending && (
-          <div className="bg-white w-full h-full absolute top-0 left-0 bg-opacity-80 grid place-items-center">
+          <div className="bg-background w-full h-full absolute top-0 left-0 bg-opacity-80 grid place-items-center">
             Loading...
           </div>
         )}
