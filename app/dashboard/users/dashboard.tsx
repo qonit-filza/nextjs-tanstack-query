@@ -1,6 +1,6 @@
 'use client'
-import { DataTable } from './components/data-table'
-import { columns } from './components/columns'
+import { DataTable } from './_components/data-table'
+import { columns } from './_components/columns'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,11 +33,28 @@ export default function Dashboard() {
   const filter = normalizeFilter({
     page: searchParams.get('page'),
     limit: searchParams.get('limit'),
+    q: searchParams.get('q'),
   })
+  console.log(filter)
 
-  function createQueryString(filter: string, value: string) {
+  function createQueryString(
+    filter: keyof NormalizedUserFilter,
+    value: string
+  ) {
+    console.log({ filter, value })
+
     const params = new URLSearchParams(searchParams.toString())
-    params.set(filter, value)
+
+    if (filter === 'q') {
+      params.delete('page')
+      params.delete('limit')
+    }
+
+    if (value) {
+      params.set(filter, value)
+    } else {
+      params.delete(filter)
+    }
 
     return params.toString()
   }
@@ -87,7 +104,17 @@ export default function Dashboard() {
   return (
     <main className="bg-muted min-h-screen p-10">
       <div className="flex justify-between">
-        <Input placeholder="Search" className="max-w-md" />
+        <Input
+          placeholder="Search"
+          className="max-w-md"
+          defaultValue={filter.q}
+          onChange={(e) => {
+            // startTransition(() => {
+
+            router.push(`${pathname}?${createQueryString('q', e.target.value)}`)
+            // })
+          }}
+        />
         <div className="flex gap-2">
           <Button variant="outline">-</Button>
           <Button variant="outline">-</Button>
@@ -106,9 +133,9 @@ export default function Dashboard() {
       <div className="mt-10 flex justify-between">
         <div className="flex items-center gap-2">
           <span className="shrink-0">
-            {`Showing ${data.users[0].id} to ${
-              data.users[data.users.length - 1].id
-            } of ${data.total} rows`}
+            {`Showing ${data.skip + 1} to ${data.skip + data.users.length} of ${
+              data.total
+            } rows`}
           </span>
           <Select
             value={filter.limit.toString()}

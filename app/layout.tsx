@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="id">
       <body className="dark">
         <Providers>
-          <NextTopLoader />
+          <NextTopLoader showSpinner={false} />
           {children}
         </Providers>
       </body>

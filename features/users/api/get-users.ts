@@ -6,9 +6,10 @@ import { createApiFilter } from '@/lib/filter'
 
 export function getUsers(
   filter: NormalizedUserFilter
-): Promise<{ users: User[]; total: number }> {
+): Promise<{ users: User[]; total: number; skip: number; limit: number }> {
   const params = createApiFilter(filter)
-  return api.get('/users', { params })
+
+  return api.get('/users/search', { params })
 }
 
 export function getUsersQueryOptions(filter: NormalizedUserFilter) {

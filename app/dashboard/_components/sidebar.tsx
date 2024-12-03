@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-// import { ScrollArea } from '@/components/ui/scroll-area'
+import Link from 'next/link'
 
 export function Sidebar() {
   return (
@@ -24,22 +24,13 @@ export function Sidebar() {
       </div>
       <Separator />
       <Accordion type="multiple">
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Is it accessible?</AccordionTrigger>
-          <AccordionContent>
-            Yes. It adheres to the WAI-ARIA design pattern.
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-          <AccordionTrigger>Is it accessible?</AccordionTrigger>
-          <AccordionContent>
-            Yes. It adheres to the WAI-ARIA design pattern.
-          </AccordionContent>
-        </AccordionItem>
         <AccordionItem value="item-3">
-          <AccordionTrigger>Is it accessible?</AccordionTrigger>
+          <AccordionTrigger>Menu</AccordionTrigger>
           <AccordionContent>
-            Yes. It adheres to the WAI-ARIA design pattern.
+            <Link href="/dashboard/products">Product</Link>
+          </AccordionContent>
+          <AccordionContent>
+            <Link href="/dashboard/users">Users</Link>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

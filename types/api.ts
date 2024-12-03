@@ -32,16 +32,19 @@ export type User = {
 export type RawUserFilter = {
   page: string | string[] | null
   limit: string | string[] | null
+  q: string | string[] | null
 }
 
 export type NormalizedUserFilter = {
   page: number
   limit: number
+  q?: string
 }
 
 export type ApiUserFilter = {
   limit: number
   skip: number
+  q?: string
 }
 
 export type Address = {
